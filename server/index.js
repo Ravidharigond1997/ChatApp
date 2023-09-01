@@ -1,12 +1,20 @@
-const express = require("express");
-const mongoose = require("mongoose");
-const cors = require("cors");
+import express from "express";
+import mongoose from "mongoose";
+import cors from "cors";
+import dotenv from "dotenv";
+
+// Importing routing for perticulor routes
+import userRouter from "./routes/userRoutes.js";
 
 const app = express();
-require("dotenv").config();
+
+// configuration env
+dotenv.config();
 
 app.use(cors());
 app.use(express.json());
+
+app.use("/api/auth", userRouter);
 
 mongoose
   .connect(process.env.MONGO_URI, {

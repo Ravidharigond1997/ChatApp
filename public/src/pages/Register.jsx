@@ -1,7 +1,7 @@
 import React, {useState, useEffect} from 'react'
 import styled from "styled-components"
 import logo from "../assets/logo.svg"
-import {Link}  from "react-router-dom"
+import {Link, useNavigate}  from "react-router-dom"
 import {ToastContainer,toast} from "react-toastify";
 import axios from "axios"
 import "react-toastify/dist/ReactToastify.css"
@@ -15,18 +15,14 @@ function Register() {
         password:"",
         confirmPassword:"",
     })
- 
-    const handleSubmit= async(e) => {
-        e.preventDefault();
-       if(handleValidation()){
-        const {password, confirmPassword, username,email} = value; 
-        const {data} = await axios.post(registerRoute,{
-            username,
-            email,
-           password
-        }) 
-       }
-    }
+  
+    const navigate = useNavigate();
+
+    useEffect(() =>{
+        if(localStorage.getItem("chat-app-user")){
+            navigate("/")
+        }
+    },[]);
 
     const toastOptions ={
         position: "bottom-right",
@@ -34,6 +30,29 @@ function Register() {
         pauseOnHover:true,
         draggable:true,
         theme:"dark"
+    }
+
+    const handleSubmit= async(e) => {
+        e.preventDefault();
+        try{
+       if(handleValidation()){
+        const {password,username,email} = value; 
+        const {data} = await axios.post(registerRoute,{
+            username,
+            email,
+           password
+        }) 
+        if(data && data.success === true){
+            toast.success(data.message, toastOptions);
+            localStorage.setItem("chat-app-user", JSON.stringify(data));
+            navigate("/")
+        }else{
+            toast.error(data.message, toastOptions)
+        }
+       }
+    }catch(error){
+         toast.error("Something went wrong", toastOptions)
+       }
     }
 
     const handleValidation = () => {
