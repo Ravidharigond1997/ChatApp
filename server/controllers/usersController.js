@@ -34,6 +34,7 @@ export const registerController = async (req, res, next) => {
     res.status(201).send({
       success: true,
       message: "User Register Successfully",
+      user,
     });
   } catch (e) {
     res.status(500).send({
@@ -73,6 +74,7 @@ export const loginController = async (req, res, next) => {
     res.status(201).send({
       success: true,
       message: "User Login Successfully",
+      user,
     });
   } catch (e) {
     console.log(e);
@@ -80,5 +82,42 @@ export const loginController = async (req, res, next) => {
       success: false,
       message: "Error in Login to user",
     });
+  }
+};
+
+export const setAvatarController = async (req, res, next) => {
+  try {
+    const userId = req.params.id;
+    const avatarImage = req.body.image;
+    const userData = await userModel.findByIdAndUpdate(userId, {
+      isAvatarImageSet: true,
+      avatarImage,
+    });
+
+    return res.json({
+      isSet: userData.isAvatarImageSet,
+      image: userData.avatarImage,
+    });
+  } catch (error) {
+    res.status(500).send({
+      succcess: false,
+      message: "Something went wrong for setAvatar",
+    });
+  }
+};
+
+export const allUsersController = async (req, res, next) => {
+  try {
+    const users = await userModel
+      .find({ _id: { $ne: req.params.id } })
+      .select(["email", "username", "avatarImage", "_id"]);
+
+    res.status(201).send({
+      success: true,
+      message: "get all users data",
+      users,
+    });
+  } catch (ex) {
+    next(ex);
   }
 };
