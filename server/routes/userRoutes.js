@@ -14,6 +14,6 @@ router.post("/login", loginController);
 
 router.post("/setAvatar/:id", setAvatarController);
 
-router.get("/allusers/:id", allUsersController);
+router.get("/getAllUsers/:id", allUsersController);
 
 export default router;

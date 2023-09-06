@@ -47,6 +47,7 @@ function Contacts({ contacts, currentUser }) {
                 src={`data:image/svg+xml;base64,${currentUserImage}`}
                 alt="avatar"
               />
+              <h1>Hello useer</h1>
             </div>
             <h3>{currentUserName}</h3>
           </div>

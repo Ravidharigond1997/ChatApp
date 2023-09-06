@@ -108,10 +108,12 @@ export const setAvatarController = async (req, res, next) => {
 
 export const allUsersController = async (req, res, next) => {
   try {
+    console.log("hello");
+    const userId = req.params.id;
     const users = await userModel
-      .find({ _id: { $ne: req.params.id } })
+      .find({ _id: { $ne: userId } })
       .select(["email", "username", "avatarImage", "_id"]);
-
+    console.log(users);
     res.status(201).send({
       success: true,
       message: "get all users data",

@@ -7,34 +7,36 @@ import Contacts from "../components/Contacts.js";
 
 function Chat() {
   const [contacts, setContacts] = useState([]);
-  const [currentUser, setCurrentUser] = useState(undefined);
+  const [currentUser, setCurrentUser] = useState(
+    JSON.parse(localStorage.getItem("chat-app-user"))
+  );
 
   const navigate = useNavigate();
 
   useEffect(() => {
+    async function findCurrentUser() {
+      if (!localStorage.getItem("chat-app-user")) {
+        navigate("/login");
+      }
+    }
     findCurrentUser();
   }, []);
 
-  const findCurrentUser = async () => {
-    if (!localStorage.getItem("chat-app-user")) {
-      navigate("/login");
-    } else {
-      setCurrentUser(await JSON.parse(localStorage.getItem("chat-app-user")));
-    }
-  };
-
-  useEffect(() => {
-    const getAllUsersData = async () => {
-      if (currentUser) {
-        if (currentUser.isAvatarImageSet) {
-          const data = await axios.get(`${getAllUsers}/${currentUser._id}`);
-          setContacts(data.users);
-        }
+  async function getAllUsersData() {
+    console.log(currentUser);
+    if (currentUser) {
+      if (currentUser.isAvatarImageSet) {
+        const data = await axios.get(`${getAllUsers}/${currentUser._id}`);
+        setContacts(data.users);
       } else {
         navigate("/setAvatar");
       }
-    };
-  }, [currentUser]);
+    }
+  }
+
+  useEffect(() => {
+    getAllUsersData();
+  }, []);
 
   return (
     <Container>
